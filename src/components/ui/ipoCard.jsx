@@ -9,10 +9,11 @@ import {
   Chip,
   Divider,
 } from "@mui/material";
-
-import ipoDetail from 
+import { useNavigate } from "react-router-dom";
 
 export default function IpoCard({ ipo }) {
+
+  const navigate = useNavigate(null)
   return (
     <Card
       variant="outlined"
@@ -101,10 +102,8 @@ export default function IpoCard({ ipo }) {
       </CardContent>
 
       <CardActions sx={{ justifyContent: "flex-end", px: 2, pb: 1.5 }}>
-        <Button size="small" variant="outlined">
-          Edit
-        </Button>
-        <Button size="small" variant="contained" color="primary">
+       
+        <Button size="small" variant="contained" color="primary" onClick={() => navigate(`/ipo/${ipo._id}`)}>
           View
         </Button>
       </CardActions>
