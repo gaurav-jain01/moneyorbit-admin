@@ -101,12 +101,37 @@ export default function IpoCard({ ipo }) {
         </Box>
       </CardContent>
 
-      <CardActions sx={{ justifyContent: "flex-end", px: 2, pb: 1.5 }}>
-       
-        <Button size="small" variant="contained" color="primary" onClick={() => navigate(`/ipo/${ipo._id}`)}>
+      <CardActions sx={{ justifyContent: "space-between", px: 2, pb: 1.5 }}>
+        <Button
+          size="small"
+          variant="outlined"
+          color="primary"
+          onClick={() => navigate(`/ipo/${ipo._id}`)}
+        >
           View
         </Button>
+
+        {ipo.isActive ? (
+          <Button
+            size="small"
+            variant="contained"
+            color="error"
+            onClick={() => handleUnpublish(ipo._id)}
+          >
+            Unpublish
+          </Button>
+        ) : (
+          <Button
+            size="small"
+            variant="contained"
+            color="success"
+            onClick={() => handlePublish(ipo._id)}
+          >
+            Publish
+          </Button>
+        )}
       </CardActions>
+
     </Card>
   );
 }

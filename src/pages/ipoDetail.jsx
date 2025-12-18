@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getIpoById } from "../features/auth/api/ipo.api";
+import  AppBar from "../components/layout/appBar";
+
 
 import {
   Box,
@@ -59,6 +61,8 @@ export default function IpoDetail() {
   if (!ipo) return null;
 
   return (
+    <>
+    <AppBar/>
     <Box sx={{mx: "auto", mt: 6, px: 2 }}>
       <Card >
         <CardContent>
@@ -206,6 +210,7 @@ export default function IpoDetail() {
         </CardContent>
       </Card>
     </Box>
+    </>
   );
 }
 

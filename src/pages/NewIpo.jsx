@@ -86,13 +86,14 @@ const handleSubmit = async (e) => {
     <>
       <ButtonAppBar />
 
-      <div className="mainContainer pt-4 px-4 md:px-20 md:pt-8">
-        <div className="flex flex-col gap-4 mb-6">
-          <h1 className="text-2xl font-bold">Launch New IPO</h1>
+      <div className="mainContainer pt-6 px-4 md:px-8 lg:px-20 md:pt-8 pb-8  mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <h1 className="text-2xl text-gray-700">Create New IPO</h1>
 
           <ButtonComponent
-            variant="contained"
+            variant="outlined"
             onClick={() => navigate("/dashboard")}
+            sx={{ minWidth: '160px' }}
           >
             Back to Dashboard
           </ButtonComponent>
@@ -101,103 +102,177 @@ const handleSubmit = async (e) => {
         {/* FORM */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-6 rounded-xl shadow space-y-4"
+          className="bg-white p-6 md:p-8 rounded-xl shadow-lg space-y-6"
         >
-          <input
-            type="text"
-            name="companyName"
-            placeholder="Company Name"
-            value={formData.companyName}
-            onChange={handleChange}
-            required
-            className="w-full border p-2 rounded"
-          />
-
-          <select
-            name="securityType"
-            value={formData.securityType}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-          >
-            <option value="equity">Equity</option>
-            <option value="debt">Debt</option>
-          </select>
-
-          <input
-            type="number"
-            name="issuePrice"
-            placeholder="Issue Price"
-            value={formData.issuePrice}
-            onChange={handleChange}
-            required
-            className="w-full border p-2 rounded"
-          />
-
-          <div className="flex gap-4">
+          {/* Company Name */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="companyName" className="text-sm font-medium text-gray-700">
+              Company Name
+            </label>
             <input
-              type="number"
-              name="min"
-              placeholder="Min Price"
-              value={formData.priceRange.min}
+              id="companyName"
+              type="text"
+              name="companyName"
+              placeholder="Enter company name"
+              value={formData.companyName}
               onChange={handleChange}
               required
-              className="w-full border p-2 rounded"
-            />
-            <input
-              type="number"
-              name="max"
-              placeholder="Max Price"
-              value={formData.priceRange.max}
-              onChange={handleChange}
-              required
-              className="w-full border p-2 rounded"
+              className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
           </div>
 
-          <input
-            type="datetime-local"
-            name="issueOpenDate"
-            value={formData.issueOpenDate}
-            onChange={handleChange}
-            required
-            className="w-full border p-2 rounded"
-          />
+          {/* Security Type */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="securityType" className="text-sm font-medium text-gray-700">
+              Security Type
+            </label>
+            <select
+              id="securityType"
+              name="securityType"
+              value={formData.securityType}
+              onChange={handleChange}
+              className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
+            >
+              <option value="equity">Equity</option>
+              <option value="debt">Debt</option>
+            </select>
+          </div>
 
-          <input
-            type="datetime-local"
-            name="issueCloseDate"
-            value={formData.issueCloseDate}
-            onChange={handleChange}
-            required
-            className="w-full border p-2 rounded"
-          />
+          {/* Issue Price */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="issuePrice" className="text-sm font-medium text-gray-700">
+              Issue Price
+            </label>
+            <input
+              id="issuePrice"
+              type="number"
+              name="issuePrice"
+              placeholder="Enter issue price"
+              value={formData.issuePrice}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            />
+          </div>
 
-          <input
-            type="datetime-local"
-            name="listingDate"
-            value={formData.listingDate}
-            onChange={handleChange}
-            required
-            className="w-full border p-2 rounded"
-          />
+          {/* Price Range */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-gray-700">
+              Price Range
+            </label>
+            <div className="flex gap-4">
+              <div className="flex-1 flex flex-col gap-2">
+                <label htmlFor="minPrice" className="text-xs text-gray-600">
+                  Minimum Price
+                </label>
+                <input
+                  id="minPrice"
+                  type="number"
+                  name="min"
+                  placeholder="Min price"
+                  value={formData.priceRange.min}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+              </div>
+              <div className="flex-1 flex flex-col gap-2">
+                <label htmlFor="maxPrice" className="text-xs text-gray-600">
+                  Maximum Price
+                </label>
+                <input
+                  id="maxPrice"
+                  type="number"
+                  name="max"
+                  placeholder="Max price"
+                  value={formData.priceRange.max}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+              </div>
+            </div>
+          </div>
 
-          <label className="flex items-center gap-2">
+          {/* Issue Open Date */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="issueOpenDate" className="text-sm font-medium text-gray-700">
+              Issue Open Date
+            </label>
+            <input
+              id="issueOpenDate"
+              type="datetime-local"
+              name="issueOpenDate"
+              value={formData.issueOpenDate}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            />
+          </div>
+
+          {/* Issue Close Date */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="issueCloseDate" className="text-sm font-medium text-gray-700">
+              Issue Close Date
+            </label>
+            <input
+              id="issueCloseDate"
+              type="datetime-local"
+              name="issueCloseDate"
+              value={formData.issueCloseDate}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            />
+          </div>
+
+          {/* Listing Date */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="listingDate" className="text-sm font-medium text-gray-700">
+              Listing Date
+            </label>
+            <input
+              id="listingDate"
+              type="datetime-local"
+              name="listingDate"
+              value={formData.listingDate}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            />
+          </div>
+
+          {/* Active Status */}
+          <div className="flex items-center gap-3 pt-2">
             <input
               type="checkbox"
+              id="isActive"
               name="isActive"
               checked={formData.isActive}
               onChange={handleChange}
+              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
             />
-            IPO Active
-          </label>
+            <label htmlFor="isActive" className="text-sm font-medium text-gray-700 cursor-pointer">
+              Mark IPO as Active
+            </label>
+          </div>
 
-          <ButtonComponent
-            type="submit"
-            variant="contained"
-            disabled={loading}
-          >
-            {loading ? "Creating..." : "Create IPO"}
-          </ButtonComponent>
+          {/* Submit Button */}
+          <div className="flex justify-end pt-4 border-t border-gray-200">
+            <ButtonComponent
+              type="submit"
+              variant="contained"
+              disabled={loading}
+              sx={{ 
+                minWidth: '160px',
+                padding: '10px 24px',
+                fontSize: '1rem',
+                fontWeight: 500
+              }}
+            >
+              {loading ? "Creating..." : "Create IPO"}
+            </ButtonComponent>
+          </div>
         </form>
       </div>
     </>

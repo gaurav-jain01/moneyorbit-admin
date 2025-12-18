@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
@@ -16,24 +17,29 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 
 export default function SideDrawer() {
   const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate();
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
 
   const drawerItems = [
-    { text: "HOME", icon: <HomeIcon /> },
-    { text: "PROFILE", icon: <PersonIcon /> },
-    { text: "IPO", icon: <TrendingUpIcon /> },
-    { text: "SETTING", icon: <SettingsIcon /> },
+    { text: "HOME", icon: <HomeIcon />, path: "/dashboard" },
+    { text: "View All IPO", icon: <PersonIcon />, path: "/ipopage" },
+    { text: "Launch New IPO", icon: <TrendingUpIcon />, path: "/ipo/new" }
   ];
 
   const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+    <Box sx={{ width: 250 }} role="presentation">
       <List>
         {drawerItems.map((item) => (
           <ListItem key={item.text} disablePadding>
-            <ListItemButton>
+            <ListItemButton
+              onClick={() => {
+                navigate(item.path);
+                setOpen(false);
+              }}
+            >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>
@@ -45,8 +51,8 @@ export default function SideDrawer() {
   );
 
   return (
-    <div>
-      {/* Hamburger Icon Button */}
+    <>
+      {/* Hamburger Icon */}
       <IconButton
         onClick={toggleDrawer(true)}
         edge="start"
@@ -55,9 +61,10 @@ export default function SideDrawer() {
       >
         <MenuIcon />
       </IconButton>
+
       <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}>
         {DrawerList}
       </Drawer>
-    </div>
+    </>
   );
 }

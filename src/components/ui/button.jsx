@@ -6,7 +6,8 @@ function ButtonComponent({
   variant = "contained",
   onClick,
   type = "button",
-  disabled
+  disabled,
+  sx
 }) {
   return (
     <Button
@@ -14,6 +15,7 @@ function ButtonComponent({
       onClick={onClick}
       type={type}
       disabled={disabled}
+      sx={sx}
     >
       {children}
     </Button>
@@ -25,7 +27,8 @@ ButtonComponent.propTypes = {
   variant: PropTypes.string,
   onClick: PropTypes.func,
   type: PropTypes.oneOf(["button", "submit", "reset"]),
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  sx: PropTypes.object
 };
 
 export default ButtonComponent;
