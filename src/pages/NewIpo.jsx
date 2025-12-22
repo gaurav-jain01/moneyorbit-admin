@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ButtonAppBar from "../components/layout/appBar";
 import ButtonComponent from "../components/ui/button";
+import InputComponent from "../components/ui/input";
 import { createIpo } from "../features/auth/api/ipo.api";
 
 function NewIpo() {
@@ -14,262 +15,190 @@ function NewIpo() {
     issueOpenDate: "",
     issueCloseDate: "",
     listingDate: "",
-    priceRange: {
-      min: "",
-      max: ""
-    },
-    isActive: false
+    priceRange: { min: "", max: "" },
+    isActive: false,
   });
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const updateField = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
-    if (name === "min" || name === "max") {
-      setFormData((prev) => ({
-        ...prev,
-        priceRange: {
-          ...prev.priceRange,
-          [name]: value
-        }
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: type === "checkbox" ? checked : value
-      }));
+  const updatePriceRange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      priceRange: { ...prev.priceRange, [field]: value },
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (+formData.priceRange.min > +formData.priceRange.max) {
+      setError("Minimum price cannot be greater than maximum price");
+      return;
+    }
+
+    setLoading(true);
+
+    const payload = {
+      ...formData,
+      issuePrice: Number(formData.issuePrice),
+      issueOpenDate: new Date(formData.issueOpenDate).toISOString(),
+      issueCloseDate: new Date(formData.issueCloseDate).toISOString(),
+      listingDate: new Date(formData.listingDate).toISOString(),
+      priceRange: {
+        min: Number(formData.priceRange.min),
+        max: Number(formData.priceRange.max),
+      },
+    };
+
+    try {
+      await createIpo(payload);
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Failed to create IPO");
+    } finally {
+      setLoading(false);
     }
   };
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-
-  const payload = {
-    ...formData,
-    issuePrice: Number(formData.issuePrice),
-
-    issueOpenDate: new Date(formData.issueOpenDate).toISOString(),
-    issueCloseDate: new Date(formData.issueCloseDate).toISOString(),
-    listingDate: new Date(formData.listingDate).toISOString(),
-
-    priceRange: {
-      min: Number(formData.priceRange.min),
-      max: Number(formData.priceRange.max),
-    },
-  };
-
-  console.log("FINAL PAYLOAD", payload);
-
-  // basic validation
-  if (payload.priceRange.min > payload.priceRange.max) {
-    alert("Min price cannot be greater than Max price");
-    setLoading(false);
-    return;
-  }
-
-  try {
-    await createIpo(payload);
-    alert("IPO created successfully ✅");
-    navigate("/dashboard");
-  } catch (err) {
-    console.error(err);
-    alert("Failed to create IPO ❌");
-  } finally {
-    setLoading(false);
-  }
-};
-
 
   return (
     <>
       <ButtonAppBar />
 
-      <div className="mainContainer pt-6 px-4 md:px-8 lg:px-20 md:pt-8 pb-8  mx-auto">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <h1 className="text-2xl text-gray-700">Create New IPO</h1>
-
-          <ButtonComponent
-            variant="outlined"
-            onClick={() => navigate("/dashboard")}
-            sx={{ minWidth: '160px' }}
-          >
-            Back to Dashboard
-          </ButtonComponent>
-        </div>
-
-        {/* FORM */}
+      <div className="min-h-screen bg-gray-50 px-4 py-8">
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-6 md:p-8 rounded-xl shadow-lg space-y-6"
+          className="bg-white max-w-3xl mx-auto p-8 rounded-xl shadow-lg flex flex-col gap-6"
         >
-          {/* Company Name */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="companyName" className="text-sm font-medium text-gray-700">
-              Company Name
-            </label>
-            <input
-              id="companyName"
-              type="text"
-              name="companyName"
-              placeholder="Enter company name"
-              value={formData.companyName}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
+          {/* HEADER */}
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-gray-800">
+              Create New IPO
+            </h1>
+
+            <ButtonComponent
+              variant="outlined"
+              onClick={() => navigate("/dashboard")}
+            >
+              Back
+            </ButtonComponent>
           </div>
 
-          {/* Security Type */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="securityType" className="text-sm font-medium text-gray-700">
+          {/* COMPANY NAME */}
+          <InputComponent
+            label="Company Name"
+            value={formData.companyName}
+            onChange={(v) => updateField("companyName", v)}
+            placeholder="Enter company name"
+            required
+            small={true}
+        />
+
+          {/* SECURITY TYPE */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">
               Security Type
             </label>
             <select
-              id="securityType"
-              name="securityType"
               value={formData.securityType}
-              onChange={handleChange}
-              className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
+              onChange={(e) => updateField("securityType", e.target.value)}
+              className="border border-gray-300 px-4 py-2 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
             >
               <option value="equity">Equity</option>
               <option value="debt">Debt</option>
             </select>
           </div>
 
-          {/* Issue Price */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="issuePrice" className="text-sm font-medium text-gray-700">
-              Issue Price
-            </label>
-            <input
-              id="issuePrice"
+          {/* ISSUE PRICE */}
+          <InputComponent
+            label="Issue Price"
+            type="number"
+            value={formData.issuePrice}
+            onChange={(v) => updateField("issuePrice", v)}
+            placeholder="Enter issue price"
+            required
+            small={true}
+          />
+
+          {/* PRICE RANGE */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <InputComponent
+              label="Minimum Price"
               type="number"
-              name="issuePrice"
-              placeholder="Enter issue price"
-              value={formData.issuePrice}
-              onChange={handleChange}
+              value={formData.priceRange.min}
+              onChange={(v) => updatePriceRange("min", v)}
+              placeholder="Min price"
               required
-              className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            small={true}
+
+            />
+            <InputComponent
+              label="Maximum Price"
+              type="number"
+              value={formData.priceRange.max}
+              onChange={(v) => updatePriceRange("max", v)}
+              placeholder="Max price"
+              required
+            small={true}
+
             />
           </div>
 
-          {/* Price Range */}
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-gray-700">
-              Price Range
-            </label>
-            <div className="flex gap-4">
-              <div className="flex-1 flex flex-col gap-2">
-                <label htmlFor="minPrice" className="text-xs text-gray-600">
-                  Minimum Price
-                </label>
-                <input
-                  id="minPrice"
-                  type="number"
-                  name="min"
-                  placeholder="Min price"
-                  value={formData.priceRange.min}
-                  onChange={handleChange}
-                  required
-                  className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                />
-              </div>
-              <div className="flex-1 flex flex-col gap-2">
-                <label htmlFor="maxPrice" className="text-xs text-gray-600">
-                  Maximum Price
-                </label>
-                <input
-                  id="maxPrice"
-                  type="number"
-                  name="max"
-                  placeholder="Max price"
-                  value={formData.priceRange.max}
-                  onChange={handleChange}
-                  required
-                  className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                />
-              </div>
-            </div>
-          </div>
+          {/* DATES */}
+          <InputComponent
 
-          {/* Issue Open Date */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="issueOpenDate" className="text-sm font-medium text-gray-700">
-              Issue Open Date
-            </label>
-            <input
-              id="issueOpenDate"
-              type="datetime-local"
-              name="issueOpenDate"
-              value={formData.issueOpenDate}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
-          </div>
+            type="datetime-local"
+            value={formData.issueOpenDate}
+            onChange={(v) => updateField("issueOpenDate", v)}
+            required
+            small={true}
 
-          {/* Issue Close Date */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="issueCloseDate" className="text-sm font-medium text-gray-700">
-              Issue Close Date
-            </label>
-            <input
-              id="issueCloseDate"
-              type="datetime-local"
-              name="issueCloseDate"
-              value={formData.issueCloseDate}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
-          </div>
+          />
 
-          {/* Listing Date */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="listingDate" className="text-sm font-medium text-gray-700">
-              Listing Date
-            </label>
-            <input
-              id="listingDate"
-              type="datetime-local"
-              name="listingDate"
-              value={formData.listingDate}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
-          </div>
+          <InputComponent
+            small={true}
+            type="datetime-local"
+            value={formData.issueCloseDate}
+            onChange={(v) => updateField("issueCloseDate", v)}
+            required
+          />
 
-          {/* Active Status */}
-          <div className="flex items-center gap-3 pt-2">
+          <InputComponent
+      
+            type="datetime-local"
+            value={formData.listingDate}
+            onChange={(v) => updateField("listingDate", v)}
+            required
+          />
+
+          {/* ACTIVE */}
+          <div className="flex items-center gap-2">
             <input
               type="checkbox"
-              id="isActive"
-              name="isActive"
               checked={formData.isActive}
-              onChange={handleChange}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+              onChange={(e) => updateField("isActive", e.target.checked)}
+              className="w-4 h-4 accent-blue-600 cursor-pointer"
             />
-            <label htmlFor="isActive" className="text-sm font-medium text-gray-700 cursor-pointer">
+            <span className="text-sm text-gray-700">
               Mark IPO as Active
-            </label>
+            </span>
           </div>
 
-          {/* Submit Button */}
-          <div className="flex justify-end pt-4 border-t border-gray-200">
-            <ButtonComponent
-              type="submit"
-              variant="contained"
-              disabled={loading}
-              sx={{ 
-                minWidth: '160px',
-                padding: '10px 24px',
-                fontSize: '1rem',
-                fontWeight: 500
-              }}
-            >
+          {/* ERROR */}
+          {error && (
+            <p className="text-sm text-red-600 text-center">
+              {error}
+            </p>
+          )}
+
+          {/* SUBMIT */}
+          <div className="flex justify-end pt-4 border-t">
+            <ButtonComponent type="submit" disabled={loading}>
               {loading ? "Creating..." : "Create IPO"}
             </ButtonComponent>
           </div>

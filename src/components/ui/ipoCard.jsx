@@ -110,26 +110,6 @@ export default function IpoCard({ ipo }) {
         >
           View
         </Button>
-
-        {ipo.isActive ? (
-          <Button
-            size="small"
-            variant="contained"
-            color="error"
-            onClick={() => handleUnpublish(ipo._id)}
-          >
-            Unpublish
-          </Button>
-        ) : (
-          <Button
-            size="small"
-            variant="contained"
-            color="success"
-            onClick={() => handlePublish(ipo._id)}
-          >
-            Publish
-          </Button>
-        )}
       </CardActions>
 
     </Card>

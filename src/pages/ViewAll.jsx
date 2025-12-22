@@ -9,6 +9,7 @@ import { minHeight } from "@mui/system";
 
 
 
+
 export default function ViewAllIpos() {
   const [ipos, setIpos] = useState([]);
   const [loading, setLoading] = useState(true);
