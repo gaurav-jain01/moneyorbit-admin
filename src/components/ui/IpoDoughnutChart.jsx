@@ -7,6 +7,7 @@ import {
   Legend,
 } from "chart.js";
 import { getAllIpo } from "../../features/auth/api/ipo.api";
+import { Box, CircularProgress } from "@mui/material";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -70,19 +71,37 @@ export default function IpoDoughnutChart() {
     }
   };
 
-  if (loading) return <p>Loading IPO chart...</p>;
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <CircularProgress size={40} />
+      </Box>
+    );
+  }
 
   return (
-    <Doughnut
-      data={chartData}
-      options={{
-        responsive: true,
-        plugins: {
-          legend: {
-            position: "bottom",
+    <Box sx={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      alignItems: 'center',
+      width: '100%',
+      maxWidth: 300,
+      margin: '0 auto'
+    }}>
+      <Doughnut
+        data={chartData}
+        options={{
+          responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 1,
+          plugins: {
+            legend: {
+              position: "bottom",
+              align: "center",
+            },
           },
-        },
-      }}
-    />
+        }}
+      />
+    </Box>
   );
 }

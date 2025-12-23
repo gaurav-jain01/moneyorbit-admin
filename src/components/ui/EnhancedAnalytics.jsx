@@ -20,7 +20,6 @@ import {
   Box,
   CircularProgress,
 } from "@mui/material";
-import IpoDoughnutChart from "./IpoDoughnutChart";
 
 ChartJS.register(
   CategoryScale,
@@ -33,8 +32,7 @@ ChartJS.register(
   Legend
 );
 
-// Custom hook for analytics data
-export function useAnalyticsData() {
+export default function EnhancedAnalytics() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     total: 0,
@@ -146,20 +144,19 @@ export function useAnalyticsData() {
     }
   };
 
-  return {
-    stats,
-    monthlyData,
-    priceTrendData,
-    loading,
-  };
-}
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
-// Export metric cards component
-export function MetricCards({ stats }) {
   return (
     <Grid container spacing={3} justifyContent="center">
+      {/* Key Metrics Cards */}
       <Grid item xs={12} sm={6} md={3}>
-        <Card elevation={2}>
+        <Card>
           <CardContent>
             <Typography color="textSecondary" gutterBottom variant="body2">
               Total IPOs
@@ -170,7 +167,7 @@ export function MetricCards({ stats }) {
       </Grid>
 
       <Grid item xs={12} sm={6} md={3}>
-        <Card elevation={2}>
+        <Card>
           <CardContent>
             <Typography color="textSecondary" gutterBottom variant="body2">
               Active IPOs
@@ -183,7 +180,7 @@ export function MetricCards({ stats }) {
       </Grid>
 
       <Grid item xs={12} sm={6} md={3}>
-        <Card elevation={2}>
+        <Card>
           <CardContent>
             <Typography color="textSecondary" gutterBottom variant="body2">
               Listed IPOs
@@ -196,7 +193,7 @@ export function MetricCards({ stats }) {
       </Grid>
 
       <Grid item xs={12} sm={6} md={3}>
-        <Card elevation={2}>
+        <Card>
           <CardContent>
             <Typography color="textSecondary" gutterBottom variant="body2">
               Avg Issue Price
@@ -205,36 +202,45 @@ export function MetricCards({ stats }) {
           </CardContent>
         </Card>
       </Grid>
-    </Grid>
-  );
-}
 
-// Export charts component
-export function AnalyticsCharts({ monthlyData, priceTrendData }) {
-  return (
-    <Grid container spacing={3}>
       {/* Monthly IPO Trend */}
-      <Grid item xs={12} md={4}>
-        <Card elevation={2}>
+      <Grid item xs={12} md={6}>
+        <Card>
           <CardContent>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom align="center">
               Monthly IPO Launch Trend
             </Typography>
             {monthlyData && (
-              <Box sx={{ height: 300 }}>
-                <Line
-                  data={monthlyData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: {
-                        display: true,
-                        position: "top",
+              <Box 
+                sx={{ 
+                  height: 300,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <Box sx={{ width: '100%', maxWidth: '100%' }}>
+                  <Line
+                    data={monthlyData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      layout: {
+                        padding: {
+                          left: 10,
+                          right: 10,
+                        }
                       },
-                    },
-                  }}
-                />
+                      plugins: {
+                        legend: {
+                          display: true,
+                          position: "top",
+                          align: "center",
+                        },
+                      },
+                    }}
+                  />
+                </Box>
               </Box>
             )}
           </CardContent>
@@ -242,80 +248,51 @@ export function AnalyticsCharts({ monthlyData, priceTrendData }) {
       </Grid>
 
       {/* Price Trend */}
-      <Grid item xs={12} md={4}>
-        <Card elevation={2}>
+      <Grid item xs={12} md={6}>
+        <Card>
           <CardContent>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom align="center">
               Recent IPO Issue Prices
             </Typography>
             {priceTrendData && (
-              <Box sx={{ height: 300 }}>
-                <Bar
-                  data={priceTrendData}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: {
-                        display: false,
+              <Box 
+                sx={{ 
+                  height: 300,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <Box sx={{ width: '100%', maxWidth: '100%' }}>
+                  <Bar
+                    data={priceTrendData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      layout: {
+                        padding: {
+                          left: 10,
+                          right: 10,
+                        }
                       },
-                    },
-                    scales: {
-                      y: {
-                        beginAtZero: true,
+                      plugins: {
+                        legend: {
+                          display: false,
+                        },
                       },
-                    },
-                  }}
-                />
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                        },
+                      },
+                    }}
+                  />
+                </Box>
               </Box>
             )}
           </CardContent>
         </Card>
       </Grid>
-
-      {/* Pie Chart */}
-      <Grid item xs={12} md={4}>
-        <Card elevation={2}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              IPO Status Overview
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: 300,
-              }}
-            >
-              <IpoDoughnutChart />
-            </Box>
-          </CardContent>
-        </Card>
-      </Grid>
-    </Grid>
-  );
-}
-
-// Default export for backward compatibility
-export default function EnhancedAnalytics() {
-  const { stats, monthlyData, priceTrendData, loading } = useAnalyticsData();
-
-  if (loading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  return (
-    <Grid container spacing={3}>
-      {/* Key Metrics Cards */}
-      <MetricCards stats={stats} />
-
-      {/* Charts */}
-      <AnalyticsCharts monthlyData={monthlyData} priceTrendData={priceTrendData} />
     </Grid>
   );
 }
